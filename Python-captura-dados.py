@@ -18,10 +18,10 @@ def converter_segundos_para_horas_minutos_segundos(segundos):
 def bytes_para_gb(bytes_value):
     return bytes_value / (1024 ** 3)
 
-mydb = mysql.connector.connect(host = 'localhost',user = 'root',passwd = '5505',database = 'SecureATM')
-cursor = mydb.cursor()
-id_atm = 1
-id_empresa = 1
+#mydb = mysql.connector.connect(host = 'localhost',user = 'root',passwd = '5505',database = 'SecureATM')
+#cursor = mydb.cursor()
+#id_atm = 1
+#id_empresa = 1
 
 print("\n-----------------------------------------")
 componente = input("Qual componente você deseja monitorar? (CPU, Disco, Memória, Rede, Sensor)")
@@ -43,7 +43,7 @@ if(componente == "CPU"):
         tempo_usuario = "{:.2f}".format(ps[0])
         tempo_sistema = ps[1] 
         porcentagem_utilizacao = psutil.cpu_percent(percpu = False)
-        numeroCpu = psutil.cpu_count()
+        numeroCpu = psutil.cpu_count()  
         frequenciaCpuMhz = psutil.cpu_freq(percpu=False)
         velocidade = "{:.2f}".format(frequenciaCpuMhz.current / 1000)
         processos = len(psutil.pids())
@@ -60,14 +60,10 @@ if(componente == "CPU"):
 
         print("Outros:")
         print("\nNúmero de CPUs lógicas no sistema:", numeroCpu)
+        print("\nNúmero de processos:", processos)
         print("\nFrequencia das CPUs no sistema:", velocidade, "GHz")
         print()
-        aberto = True
 
-        query = 'INSERT INTO cpu(aberto, porcentagem_utilizacao, velocidade, processos, tempo_usuario, tempo_sistema, fk_atm, fk_empresa ) VALUES(%s, %s,%s, %s, %s, %s, %s, %s)'
-        param = [aberto, porcentagem_utilizacao, velocidade, processos, tempo_usuario, tempo_sistema, id_atm, id_empresa]
-        cursor.execute(query, param)
-        mydb.commit()
         time.sleep(20)
     
 elif(componente == "Disco"):
@@ -117,13 +113,7 @@ elif(componente == "Disco"):
             print(f"Leituras:", io.read_count)
             print(f"Escritas:", io.write_count)
             print()
-
-        aberto = True
-
-        query = 'INSERT INTO disco(aberto, nome_disco, porcentagem_uso, capacidade_total, capacidade_usada, capacidade_livre, leituras, escritas, fk_atm, fk_empresa) VALUES(%s, %s,%s, %s, %s, %s, %s, %s, %s, %s)'
-        param = [aberto, nome_disco,porcentagem_uso, capacidade_total, capacidade_usada, capacidade_livre, leituras, escritas, id_atm, id_empresa]
-        cursor.execute(query, param)
-        mydb.commit()
+            
         time.sleep(20)
 
 elif(componente == "Memória"):
@@ -151,13 +141,6 @@ elif(componente == "Memória"):
         print("Livre: {:.2f} GB".format(bytes_para_gb(swap.free)))
         print("Percentual de Uso:", swap.percent,"%")
         print()
-        
-        aberto = True
-
-        query = 'INSERT INTO memoria(aberto, total, usado, livre, porcentagem_uso, fk_atm, fk_empresa) VALUES(%s, %s,%s, %s, %s, %s, %s)'
-        param = [aberto, total, usado, livre, porcentagem_uso, id_atm, id_empresa]
-        cursor.execute(query, param)
-        mydb.commit()
         
         time.sleep(20)
    
@@ -196,11 +179,6 @@ elif(componente == "Rede"):
         print("Bytes Enviados:", io_rede.bytes_sent)
 
         aberto = True
-        
-        query = 'INSERT INTO rede(aberto, tipo_conexao, velocidade_conexao, bytes_enviados, bytes_recebidos, fk_atm, fk_empresa) VALUES(%s, %s, %s, %s, %s, %s, %s)'
-        param = [aberto, tipo_conexao, velocidade_conexao, bytes_enviados, bytes_recebidos,  id_atm, id_empresa]
-        cursor.execute(query, param)
-        mydb.commit()
         
         time.sleep(20)
 
