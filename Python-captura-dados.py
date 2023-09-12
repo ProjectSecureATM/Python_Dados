@@ -5,8 +5,9 @@ import platform
 import mysql.connector
 import ping3
 import socket
+from cred import usr, pswd
 
-
+ 
 def converter_segundos_para_horas_minutos_segundos(segundos):
     horas = segundos // 3600  # 1 hora = 3600 segundos
     segundos_restantes = segundos % 3600
@@ -20,18 +21,26 @@ def bytes_para_gb(bytes_value):
 
 #mydb = mysql.connector.connect(host = 'localhost',user = 'root',passwd = '5505',database = 'SecureATM')
 #cursor = mydb.cursor()
-#id_atm = 1
-#id_empresa = 1
+fk_atm = 1
 
 print("\n-----------------------------------------")
-componente = input("Qual plano você deseja analisar? \nStandard: CPU, Memória, Disco \nProfessional: CPU, Memória, Disco e Rede\nUltra: CPU, Memória, Disco, Rede, Janela de Sistemas e Sensor\n-----------------------------------------\n")
+componente = input("Qual plano você deseja analisar? \n1: Standard (CPU, Memória, Disco \n2: Advanced(CPU, Memória, Disco e Rede)\n3: Premium(CPU, Memória, Disco, Rede, Janela de Sistemas e Sensor)\n-----------------------------------------\n")
 
 print("\n-----------------------------------------")
-print("\nComponente = CPU\n")
-print("-----------------------------------------")
 
 while(True):
+    
+    try:
+        mydb = mysql.connector.connect(host = 'localhost',user = usr, password = pswd, database = 'SecureATM')
+        if mydb.is_connected():
+            cursor = mydb.cursor()
+            print("Banco conectado")
+    except mysql.connector.Error as e:
+        print("Erro ao conectar com o MySQL", e)
         
+
+    print("\nComponente = CPU\n")
+    print("-----------------------------------------")
     print("\nSituação geral: ")
     print("-----------------------------------------")
         
@@ -62,6 +71,27 @@ while(True):
     print("\nNúmero de processos:", processos)
     print("\nFrequencia das CPUs no sistema:", velocidade, "GHz")
     print()
+
+    query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+    param = [porcentagem_utilizacao, fk_atm, 1]
+    cursor.execute(query, param)
+
+    query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+    param = [velocidade, fk_atm, 2]
+    cursor.execute(query, param)
+
+    query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+    param = [processos, fk_atm, 3]
+    cursor.execute(query, param)
+
+    query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+    param = [tempo_usuario, fk_atm, 4]
+    cursor.execute(query, param)
+
+    query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+    param = [tempo_sistema, fk_atm, 5]
+    cursor.execute(query, param)
+    
 
     print("\n-----------------------------------------")
     print("\nComponente = Disco\n")
@@ -108,7 +138,30 @@ while(True):
         print(f"Leituras:", io.read_count)
         print(f"Escritas:", io.write_count)
         print()
-            
+
+    query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+    param = [nome_disco, fk_atm, 9]
+    cursor.execute(query, param)
+
+    query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+    param = [porcentagem_uso, fk_atm, 11]
+    cursor.execute(query, param)
+    
+    query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+    param = [capacidade_total, fk_atm, 12]
+    cursor.execute(query, param)
+
+    query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+    param = [capacidade_usada, fk_atm, 13]
+    cursor.execute(query, param)
+
+    query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+    param = [leituras, fk_atm, 14]
+    cursor.execute(query, param)
+
+    query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+    param = [escritas, fk_atm, 15]
+    cursor.execute(query, param)
 
     print("\n-----------------------------------------")
     print("\nComponente selecionado = Memória\n")
@@ -134,7 +187,20 @@ while(True):
     print("Percentual de Uso:", swap.percent,"%")
     print()
 
-    if(componente == "Professional"):
+
+    query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+    param = [total, fk_atm, 6]
+    cursor.execute(query, param)
+
+    query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+    param = [usado, fk_atm, 7]
+    cursor.execute(query, param)
+
+    query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+    param = [porcentagem_uso, fk_atm, 8]
+    cursor.execute(query, param)
+
+    if(componente == "2"):
         print("\n-----------------------------------------")
         print("\nComponente = Rede\n")
         print("-----------------------------------------")
@@ -167,9 +233,29 @@ while(True):
         print("Bytes Recebidos:", io_rede.bytes_recv)
         print("Bytes Enviados:", io_rede.bytes_sent)
 
+        query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+        param = [tipo_conexao, fk_atm, 18]
+        cursor.execute(query, param)
+
+        query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+        param = [velocidade_conexao, fk_atm, 19]
+        cursor.execute(query, param)
+
+        query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+        param = [velocidade_conexao, fk_atm, 19]
+        cursor.execute(query, param)
+
+        query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+        param = [bytes_enviados, fk_atm, 20]
+        cursor.execute(query, param)
+
+        query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+        param = [bytes_recebidos, fk_atm, 21]
+        cursor.execute(query, param)
+
         
 
-    elif(componente == "Ultra"):
+    elif(componente == "3"):
         print("\n-----------------------------------------")
         print("\nComponente = Sensor\n")
         print("-----------------------------------------")
@@ -188,6 +274,22 @@ while(True):
         print("Carregamento:", bateriaEstado)
         print()
 
+        import datetime
+        boot_time = datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S")
+        print("Tempo ligado:", boot_time)
+
+        query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+        param = [bateriaEstado, fk_atm, 23]
+        cursor.execute(query, param)
+
+        query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+        param = [boot_time, fk_atm, 24]
+        cursor.execute(query, param)
+
+        query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+        param = [dadosBateria.percent, fk_atm, 25]
+        cursor.execute(query, param)
+
         # sensor_data = psutil.sensors_temperatures()
 
         print("\n-----------------------------------------")
@@ -203,8 +305,17 @@ while(True):
         titulo_da_janela = janela_ativa.title
 
         print(f"Janela Ativa: {titulo_da_janela}")
+
+        query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
+        param = [titulo_da_janela, fk_atm, 26]
+        cursor.execute(query, param)
+        
+    mydb.commit()
     time.sleep(20)
+
     
+    if(mydb.is_connected()):
+        mydb.close()
 
 
 
