@@ -24,131 +24,120 @@ def bytes_para_gb(bytes_value):
 #id_empresa = 1
 
 print("\n-----------------------------------------")
-componente = input("Qual componente você deseja monitorar? (CPU, Disco, Memória, Rede, Sensor)")
+componente = input("Qual plano você deseja analisar? \nStandard: CPU, Memória, Disco \nProfessional: CPU, Memória, Disco e Rede\nUltra: CPU, Memória, Disco, Rede, Janela de Sistemas e Sensor\n-----------------------------------------\n")
 
-if(componente == "CPU"):
+print("\n-----------------------------------------")
+print("\nComponente = CPU\n")
+print("-----------------------------------------")
+
+while(True):
+        
+    print("\nSituação geral: ")
+    print("-----------------------------------------")
+        
+    ps = psutil.cpu_times()
+        
+    TempoUsuarioHoras, TempoUsuarioMinutos, TempoUsuarioSegundos = converter_segundos_para_horas_minutos_segundos(ps[0])
+    TempoSistemaHoras, TempoSistemaMinutos, TempoSistemaSegundos = converter_segundos_para_horas_minutos_segundos(ps[1])
+    tempo_usuario = "{:.2f}".format(ps[0])
+    tempo_sistema = ps[1] 
+    porcentagem_utilizacao = psutil.cpu_percent(percpu = False)
+    numeroCpu = psutil.cpu_count()  
+    frequenciaCpuMhz = psutil.cpu_freq(percpu=False)
+    velocidade = "{:.2f}".format(frequenciaCpuMhz.current / 1000)
+    processos = len(psutil.pids())
+
+    print("Número de processos", processos)
+    print("Tempo:")
+    print("Tempo de usuário:", TempoUsuarioHoras, "h", TempoUsuarioMinutos, 'm e',TempoUsuarioSegundos, 's')  
+    print("Tempo de sistema:", TempoSistemaHoras, "h", TempoSistemaMinutos, 'm e',TempoSistemaSegundos, 's')      
+        
+
+    print("\nUtilização:")
+    print("Porcentagem sendo utilizada da CPU: ", porcentagem_utilizacao, "%")
+    print()
+
+    print("Outros:")
+    print("\nNúmero de CPUs lógicas no sistema:", numeroCpu)
+    print("\nNúmero de processos:", processos)
+    print("\nFrequencia das CPUs no sistema:", velocidade, "GHz")
+    print()
+
     print("\n-----------------------------------------")
-    print("\nComponente selecionado = CPU\n")
+    print("\nComponente = Disco\n")
     print("-----------------------------------------")
 
-    while(True):
-        
-        print("\nSituação geral: ")
-        print("-----------------------------------------")
-        
-        ps = psutil.cpu_times()
-        
-        TempoUsuarioHoras, TempoUsuarioMinutos, TempoUsuarioSegundos = converter_segundos_para_horas_minutos_segundos(ps[0])
-        TempoSistemaHoras, TempoSistemaMinutos, TempoSistemaSegundos = converter_segundos_para_horas_minutos_segundos(ps[1])
-        tempo_usuario = "{:.2f}".format(ps[0])
-        tempo_sistema = ps[1] 
-        porcentagem_utilizacao = psutil.cpu_percent(percpu = False)
-        numeroCpu = psutil.cpu_count()  
-        frequenciaCpuMhz = psutil.cpu_freq(percpu=False)
-        velocidade = "{:.2f}".format(frequenciaCpuMhz.current / 1000)
-        processos = len(psutil.pids())
-
-        print("Número de processos", processos)
-        print("Tempo:")
-        print("Tempo de usuário:", TempoUsuarioHoras, "h", TempoUsuarioMinutos, 'm e',TempoUsuarioSegundos, 's')  
-        print("Tempo de sistema:", TempoSistemaHoras, "h", TempoSistemaMinutos, 'm e',TempoSistemaSegundos, 's')      
-        
-
-        print("\nUtilização:")
-        print("Porcentagem sendo utilizada da CPU: ", porcentagem_utilizacao, "%")
-        print()
-
-        print("Outros:")
-        print("\nNúmero de CPUs lógicas no sistema:", numeroCpu)
-        print("\nNúmero de processos:", processos)
-        print("\nFrequencia das CPUs no sistema:", velocidade, "GHz")
-        print()
-
-        time.sleep(20)
-    
-elif(componente == "Disco"):
-    print("\n-----------------------------------------")
-    print("\nComponente selecionado = Disco\n")
+    print("\nSituação geral: ")
     print("-----------------------------------------")
+    particoes = psutil.disk_partitions()
 
-    while(True):
-        print("\nSituação geral: ")
-        print("-----------------------------------------")
-        particoes = psutil.disk_partitions()
-
-        print("Partições de Disco:")
-        for particao in particoes:
-            print("Ponto de Montagem:", particao.mountpoint)
-            print("Sistema de Arquivos:", particao.fstype)
-            print("Dispositivo:", particao.device)
-        print()
-        
-        meu_so = platform.system()
-        if(meu_so == "Linux"):
-            nome_disco = '/'
-            disco = psutil.disk_usage(nome_disco)
-        elif(meu_so == "Windows"):
-            nome_disco = 'C:\\'
-            disco = psutil.disk_usage(nome_disco) 
-
-        porcentagem_uso = disco.percent
-        capacidade_total = "{:.2f}".format(bytes_para_gb(disco.total))
-        capacidade_usada = "{:.2f}".format(bytes_para_gb(disco.used))
-        capacidade_livre = "{:.2f}".format(bytes_para_gb(disco.free))
-
-        print("Uso de Disco:")
-        print(f"Nome do Disco:", nome_disco)
-        print(f"Total:", capacidade_total, "bytes")
-        print(f"Usado:", capacidade_usada, "bytes")
-        print(f"Livre:", capacidade_livre, "bytes")
-        print(f"Percentual de Uso:", porcentagem_uso, "%")
-        print()
-
-        io_disco = psutil.disk_io_counters(perdisk=True)
-        print("E/S de Disco:")
-        for disco, io in io_disco.items():
-            leituras = io.read_count
-            escritas = io.write_count
-            print(f"Disco:", disco)
-            print(f"Leituras:", io.read_count)
-            print(f"Escritas:", io.write_count)
-            print()
+    print("Partições de Disco:")
+    for particao in particoes:
+        print("Ponto de Montagem:", particao.mountpoint)
+        print("Sistema de Arquivos:", particao.fstype)
+        print("Dispositivo:", particao.device)
+    print()
             
-        time.sleep(20)
+    meu_so = platform.system()
+    if(meu_so == "Linux"):
+        nome_disco = '/'
+        disco = psutil.disk_usage(nome_disco)
+    elif(meu_so == "Windows"):
+        nome_disco = 'C:\\'
+        disco = psutil.disk_usage(nome_disco) 
 
-elif(componente == "Memória"):
+    porcentagem_uso = disco.percent
+    capacidade_total = "{:.2f}".format(bytes_para_gb(disco.total))
+    capacidade_usada = "{:.2f}".format(bytes_para_gb(disco.used))
+    capacidade_livre = "{:.2f}".format(bytes_para_gb(disco.free))
+
+    print("Uso de Disco:")
+    print(f"Nome do Disco:", nome_disco)
+    print(f"Total:", capacidade_total, "bytes")
+    print(f"Usado:", capacidade_usada, "bytes")
+    print(f"Livre:", capacidade_livre, "bytes")
+    print(f"Percentual de Uso:", porcentagem_uso, "%")
+    print()
+
+    io_disco = psutil.disk_io_counters(perdisk=True)
+    print("E/S de Disco:")
+    for disco, io in io_disco.items():
+        leituras = io.read_count
+        escritas = io.write_count
+        print(f"Disco:", disco)
+        print(f"Leituras:", io.read_count)
+        print(f"Escritas:", io.write_count)
+        print()
+            
+
     print("\n-----------------------------------------")
     print("\nComponente selecionado = Memória\n")
     print("-----------------------------------------")
 
-    while(True):
-        memoria_virtual = psutil.virtual_memory()
-        total = "{:.2f}".format(bytes_para_gb(memoria_virtual.total))
-        livre = "{:.2f}".format(bytes_para_gb(memoria_virtual.available))
-        usado = "{:.2f}".format(bytes_para_gb(memoria_virtual.used))
-        porcentagem_uso = memoria_virtual.percent
-        print("Memória Virtual:")
-        print("Total:", total,"GB")
-        print("Disponível:", livre,"GB")
-        print("Usado:", usado,"GB")
-        print("Percentual de Uso:", porcentagem_uso,"%")
-        print()
+    memoria_virtual = psutil.virtual_memory()
+    total = "{:.2f}".format(bytes_para_gb(memoria_virtual.total))
+    livre = "{:.2f}".format(bytes_para_gb(memoria_virtual.available))
+    usado = "{:.2f}".format(bytes_para_gb(memoria_virtual.used))
+    porcentagem_uso = memoria_virtual.percent
+    print("Memória Virtual:")
+    print("Total:", total,"GB")
+    print("Disponível:", livre,"GB")
+    print("Usado:", usado,"GB")
+    print("Percentual de Uso:", porcentagem_uso,"%")
+    print()
 
-        swap = psutil.swap_memory()
-        print("Swap:")
-        print("Total: {:.2f} GB".format(bytes_para_gb(swap.total)))
-        print("Usado: {:.2f} GB".format(bytes_para_gb(swap.used)))
-        print("Livre: {:.2f} GB".format(bytes_para_gb(swap.free)))
-        print("Percentual de Uso:", swap.percent,"%")
-        print()
-        
-        time.sleep(20)
-   
-elif(componente == "Rede"):
-    print("\n-----------------------------------------")
-    print("\nComponente selecionado = Rede\n")
-    print("-----------------------------------------")
-    while(True):
+    swap = psutil.swap_memory()
+    print("Swap:")
+    print("Total: {:.2f} GB".format(bytes_para_gb(swap.total)))
+    print("Usado: {:.2f} GB".format(bytes_para_gb(swap.used)))
+    print("Livre: {:.2f} GB".format(bytes_para_gb(swap.free)))
+    print("Percentual de Uso:", swap.percent,"%")
+    print()
+
+    if(componente == "Professional"):
+        print("\n-----------------------------------------")
+        print("\nComponente = Rede\n")
+        print("-----------------------------------------")
         print("\nSituação geral: ")
         print("-----------------------------------------")
 
@@ -178,15 +167,12 @@ elif(componente == "Rede"):
         print("Bytes Recebidos:", io_rede.bytes_recv)
         print("Bytes Enviados:", io_rede.bytes_sent)
 
-        aberto = True
         
-        time.sleep(20)
 
-elif(componente == "Sensor"):
-    print("\n-----------------------------------------")
-    print("\nComponente selecionado = Sensor\n")
-    print("-----------------------------------------")
-    while(True):
+    elif(componente == "Ultra"):
+        print("\n-----------------------------------------")
+        print("\nComponente = Sensor\n")
+        print("-----------------------------------------")
         print("\nSituação geral: ")
         print("-----------------------------------------")
         
@@ -201,7 +187,25 @@ elif(componente == "Sensor"):
         print("Tempo restante:", TempoRestanteHoras, "h", TempoRestanteMinutos, 'm e',TempoRestanteSegundos, 's')  
         print("Carregamento:", bateriaEstado)
         print()
-        
-        time.sleep(20)
+
+        # sensor_data = psutil.sensors_temperatures()
+
+        print("\n-----------------------------------------")
+        print("\nJanela de Sistemas\n")
+        print("-----------------------------------------")
+        print("\nSituação geral: ")
+        print("-----------------------------------------")
+
+        import pygetwindow as gw
+
+        janela_ativa = gw.getActiveWindow()
+
+        titulo_da_janela = janela_ativa.title
+
+        print(f"Janela Ativa: {titulo_da_janela}")
+    time.sleep(20)
+    
+
+
 
 
