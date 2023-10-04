@@ -19,14 +19,14 @@ def converter_segundos_para_horas_minutos_segundos(segundos):
 def bytes_para_gb(bytes_value):
     return bytes_value / (1024 ** 3)
 
-#mydb = mysql.connector.connect(host = 'localhost',user = 'root',passwd = '5505',database = 'SecureATM')
-#cursor = mydb.cursor()
+mydb = mysql.connector.connect(host = 'localhost',user = 'aluno',passwd = 'sptech',database = 'SecureATM')
+cursor = mydb.cursor()
 fk_atm = 1
 
 while(True):
 
     print("\n-----------------------------------------")
-    componente = input("Qual plano você deseja analisar? \n1: Standard (CPU, Memória, Disco \n2: Advanced(CPU, Memória, Disco e Rede)\n-----------------------------------------\n")
+    componente = input("Qual plano você deseja analisar? \n1: Standard (CPU, Memória, Disco \n-----------------------------------------\n")
 
     print("\n-----------------------------------------")
 
@@ -52,51 +52,30 @@ while(True):
                     
                 ps = psutil.cpu_times()
                     
-                TempoUsuarioHoras, TempoUsuarioMinutos, TempoUsuarioSegundos = converter_segundos_para_horas_minutos_segundos(ps[0])
-                TempoSistemaHoras, TempoSistemaMinutos, TempoSistemaSegundos = converter_segundos_para_horas_minutos_segundos(ps[1])
-                tempo_usuario = "{:.2f}".format(ps[0])
-                #tempo_sistema = ps[1] 
+                
                 porcentagem_utilizacao = psutil.cpu_percent(percpu = False)
                 numeroCpu = psutil.cpu_count()  
                 frequenciaCpuMhz = psutil.cpu_freq(percpu=False)
                 velocidade = "{:.2f}".format(frequenciaCpuMhz.current / 1000)
                 processos = len(psutil.pids())
 
-                #print("Número de processos", processos)
-                # print("Tempo:")
-                #print("Tempo de usuário:", TempoUsuarioHoras, "h", TempoUsuarioMinutos, 'm e',TempoUsuarioSegundos, 's')  
-                #print("Tempo de sistema:", TempoSistemaHoras, "h", TempoSistemaMinutos, 'm e',TempoSistemaSegundos, 's')      
-                    
 
                 print("\nUtilização:")
                 print("Porcentagem sendo utilizada da CPU: ", porcentagem_utilizacao, "%")
                 print()
 
                 print("Outros:")
-                #print("\nNúmero de CPUs lógicas no sistema:", numeroCpu)
-                #print("\nNúmero de processos:", processos)
                 print("\nFrequencia das CPUs no sistema:", velocidade, "GHz")
                 print()
 
                 query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
                 param = [porcentagem_utilizacao, fk_atm, 1]
-                #cursor.execute(query, param)
+                cursor.execute(query, param)
 
                 query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
                 param = [velocidade, fk_atm, 2]
-                #cursor.execute(query, param)
+                cursor.execute(query, param)
 
-                #query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
-                #param = [processos, fk_atm, 3]
-                #cursor.execute(query, param)
-
-                #query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
-                #param = [tempo_usuario, fk_atm, 4]
-                #cursor.execute(query, param)
-
-                #query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
-                #param = [tempo_sistema, fk_atm, 5]
-                #cursor.execute(query, param)
                 
 
                 print("\n-----------------------------------------")
@@ -107,20 +86,7 @@ while(True):
                 print("-----------------------------------------")
                 particoes = psutil.disk_partitions()
 
-                #print("Partições de Disco:")
-                #for particao in particoes:
-                    #print("Ponto de Montagem:", particao.mountpoint)
-                    #print("Sistema de Arquivos:", particao.fstype)
-                    #print("Dispositivo:", particao.device)
-                #print()
                         
-                #meu_so = platform.system()
-                #if(meu_so == "Linux"):
-                nome_disco = '/'
-                disco = psutil.disk_usage(nome_disco)
-                #elif(meu_so == "Windows"):
-                    #nome_disco = 'C:\\'
-                    #disco = psutil.disk_usage(nome_disco) 
 
                 porcentagem_uso = disco.percent
                 capacidade_total = "{:.2f}".format(bytes_para_gb(disco.total))
@@ -135,31 +101,19 @@ while(True):
                 print(f"Percentual de Uso:", porcentagem_uso, "%")
                 print()
 
-                #io_disco = psutil.disk_io_counters(perdisk=True)
-                #print("E/S de Disco:")
-                #for disco, io in io_disco.items():
-                    #leituras = io.read_count
-                    #escritas = io.write_count
-                    #print(f"Disco:", disco)
-                    #print(f"Leituras:", io.read_count)
-                    #print(f"Escritas:", io.write_count)
-                    #print()
-
-                ##query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
-                ##param = [nome_disco, fk_atm, 9]
-                ##cursor.execute(query, param)
+               
 
                 query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
                 param = [porcentagem_uso, fk_atm, 11]
-                #cursor.execute(query, param)
+                cursor.execute(query, param)
                 
                 query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
                 param = [capacidade_total, fk_atm, 12]
-                #cursor.execute(query, param)
+                cursor.execute(query, param)
 
                 query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
                 param = [capacidade_usada, fk_atm, 13]
-                #cursor.execute(query, param)
+                cursor.execute(query, param)
 
                 ##query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
                 ##param = [leituras, fk_atm, 14]
@@ -196,68 +150,15 @@ while(True):
 
                 query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
                 param = [total, fk_atm, 6]
-                #cursor.execute(query, param)
+                cursor.execute(query, param)
 
                 query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
                 param = [usado, fk_atm, 7]
-                #cursor.execute(query, param)
+                cursor.execute(query, param)
 
                 query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
                 param = [porcentagem_uso, fk_atm, 8]
-                #cursor.execute(query, param)
-
-                if(componente == "2"):
-                    print("\n-----------------------------------------")
-                    print("\nComponente = Rede\n")
-                    print("-----------------------------------------")
-                    print("\nSituação geral: ")
-                    print("-----------------------------------------")
-
-                     #Coletar informações de rede com psutil
-                    network_info = psutil.net_if_addrs()
-
-                    # Iterar pelas interfaces de rede
-                    for interface, addresses in network_info.items():
-                        for address in addresses:
-                            if address.family == socket.AF_INET:
-                                endereco_ip = address.address
-                                nome_host = address.broadcast or ""
-                                tipo_conexao = interface
-                                velocidade_conexao = psutil.net_if_stats()[interface].speed
-                                uso_banda = psutil.net_io_counters(pernic=True)[interface].bytes_sent / 1024 / 1024  # MB
-                                latencia_ms = ping3.ping(endereco_ip) 
-                                status = "Ativo"  # obs: lógica para verificar o status da conexão aqui
-                    io_rede = psutil.net_io_counters()
-                    bytes_enviados = io_rede.bytes_sent
-                    bytes_recebidos = io_rede.bytes_recv
-                    print("Tráfego de Rede Total:")
-                    print("Nome host:", nome_host)
-                    print("Endereço IP:", endereco_ip)
-                    print("Tipo conexão:", tipo_conexao)
-                    print("Velocidade conexão:", velocidade_conexao)
-                    print("Latencia(ms):", latencia_ms)
-                    print("Bytes Recebidos:", io_rede.bytes_recv)
-                    print("Bytes Enviados:", io_rede.bytes_sent)
-
-                    query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
-                    param = [tipo_conexao, fk_atm, 18]
-                    #cursor.execute(query, param)
-
-                    query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
-                    param = [velocidade_conexao, fk_atm, 19]
-                    #cursor.execute(query, param)
-
-                    query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
-                    param = [velocidade_conexao, fk_atm, 19]
-                    #cursor.execute(query, param)
-
-                    query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
-                    param = [bytes_enviados, fk_atm, 20]
-                    #cursor.execute(query, param)
-
-                    query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
-                    param = [bytes_recebidos, fk_atm, 21]
-                    #cursor.execute(query, param)
+                cursor.execute(query, param)
 
                 
                 tentativas += 1

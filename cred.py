@@ -1,2 +1,2 @@
-usr = 'root'
-pswd = '5505'
+usr = 'aluno'
+pswd = 'sptech'
