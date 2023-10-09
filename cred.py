@@ -1,2 +1,2 @@
-usr = 'aluno'
-pswd = 'sptech'
+usr = 'root'
+pswd = 'ph993387998'

@@ -19,7 +19,7 @@ def converter_segundos_para_horas_minutos_segundos(segundos):
 def bytes_para_gb(bytes_value):
     return bytes_value / (1024 ** 3)
 
-mydb = mysql.connector.connect(host = 'localhost',user = 'aluno',passwd = 'sptech',database = 'SecureATM')
+mydb = mysql.connector.connect(host = 'localhost',user = 'root',passwd = 'ph993387998',database = 'SecureATM')
 cursor = mydb.cursor()
 fk_atm = 1
 
@@ -31,6 +31,7 @@ while(True):
     print("\n-----------------------------------------")
 
     while(True):
+        fk_atm = 1
         tentativas = 0
         resposta = input("Quer ver os dados? (s/n): ")
         
@@ -85,7 +86,7 @@ while(True):
                 print("\nSituação geral: ")
                 print("-----------------------------------------")
                 particoes = psutil.disk_partitions()
-
+                disco = psutil.disk_usage
                         
 
                 porcentagem_uso = disco.percent
@@ -115,13 +116,6 @@ while(True):
                 param = [capacidade_usada, fk_atm, 13]
                 cursor.execute(query, param)
 
-                ##query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
-                ##param = [leituras, fk_atm, 14]
-                ##cursor.execute(query, param)
-
-                ##query = 'INSERT INTO leitura(valor, fk_atm, fk_componente) VALUES(%s, %s,%s)'
-                ##param = [escritas, fk_atm, 15]
-                ##cursor.execute(query, param)
 
                 print("\n-----------------------------------------")
                 print("\nComponente selecionado = Memória\n")
@@ -167,12 +161,12 @@ while(True):
             break
             
             
-                #mydb.commit()
-                #time.sleep(20)
+            mydb.commit()
+            time.sleep(20)
 
                 
-                #if(mydb.is_connected()):
-                 #   mydb.close()
+            if(mydb.is_connected()):
+                mydb.close()
 
 
 
