@@ -18,15 +18,11 @@ while(True):
                             print("-----------------------------------------")
                             print("|               Banco conectado               |\n----------------------------------------- ")
                             print("-------------------------------------------")
-                    else:
-                            print("-----------------------------------------")
-                            print("|               Banco não conectado          |\n----------------------------------------- ")
-                            print("-------------------------------------------")
-                    print("| Porcentagem de uso de CPU: {:.2f}%".format(cpuPercent)," |\n------------------------------------------- ")
-                    print("---------------------------------------------")
-                    print("| Porcentagem de uso de RAM: {:.2f}%".format(ramPercent)," |\n--------------------------------------------- ")
-                    print("-------------------------------------------------------------")
-                    print("| Porcentagem de Memória em disco ocupada: {:.2f}".format(diskPercent)," |\n------------------------------------------------------------- ")
+                            print("| Porcentagem de uso de CPU: {:.2f}%".format(cpuPercent)," |\n------------------------------------------- ")
+                            print("---------------------------------------------")
+                            print("| Porcentagem de uso de RAM: {:.2f}%".format(ramPercent)," |\n--------------------------------------------- ")
+                            print("-------------------------------------------------------------")
+                            print("| Porcentagem de Memória em disco ocupada: {:.2f}".format(diskPercent)," |\n------------------------------------------------------------- ")
                #lista de variaveis que carregam os dados colhidos que serão inseridos nessa iteração EM ORDEM
                     dadosInsertCpu = [cpuPercent]
                     dadosInsertRam = [ramPercent]
@@ -35,17 +31,17 @@ while(True):
                     db_info = mydb.get_server_info()
                #Abre cursor permitindo inserção
                     mycursor = mydb.cursor()
-               #inserção stringificada (id=null, time, %s= valor, 1=componenteID, 1=ATM_ID)
+               #inserção dados CPU
                     sql_query = "INSERT INTO leitura VALUES (null, current_timestamp(), %s, 3, 1)"
                #cursor executa a query e é feito o commit da transação
                     mycursor.execute(sql_query, dadosInsertCpu)
                     mydb.commit()
-               #inserção stringificada (id=null, time, %s= valor, 2=componenteID, 1=ATM_ID)
+               #inserção dados RAM
                     sql_query = "INSERT INTO leitura VALUES (null, current_timestamp(), %s, 1, 1)"
                #cursor executa a query e é feito o commit da transação
                     mycursor.execute(sql_query, dadosInsertRam)
                     mydb.commit()
-                    #inserção stringificada (id=null, time, %s= valor, 3=componenteID, 1=ATM_ID)
+               #inserção dados DISCO
                     sql_query = "INSERT INTO leitura VALUES (null, current_timestamp(), %s, 2, 1)"
                #cursor executa a query e é feito o commit da transação
                     mycursor.execute(sql_query, dadosInsertDisk)
